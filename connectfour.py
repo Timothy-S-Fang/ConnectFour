@@ -1,4 +1,4 @@
-import numpy 
+import numpy as np
 
 board_size = (6,7) #size of the columns, rows
 cell_empty = 0 #empty cell on board
@@ -7,13 +7,13 @@ player_y = 2 #player y piece on board
 game_over = False
 turn = 0
 
-#define game_board using 2D numpy array
-game_board = numpy.zeros(board_size, dtype= int)
+#define game_board using 2D np array
+game_board = np.zeros(board_size, dtype= int)
 
 def create_board():
-    # Initialize the board by uing the 2D numpy array
+    # Initialize the board by uing the 2D np array
     global game_board
-    game_board = numpy.zeros(board_size, dtype= int)
+    game_board = np.zeros(board_size, dtype= int)
 
 def player_turn(board, row, col, piece):
     # make a move
@@ -25,7 +25,7 @@ def valid_move(board, col):
 
 def print_board():
     # print current game state
-    print(np.flip(board))
+    print(np.flip(game_board))
     return
 
 def game_progress():
@@ -72,12 +72,13 @@ def get_open_row():
 
     return
 
-while not game_over:
+print_board()
 
+while not game_over:
     # Player one turn
     if turn == 0:
         col = int(input("Player 1 Choose your move from (0-6)"))
-        if valid_move():
+        if valid_move(game_board, col):
             row = get_open_row()
             player_turn(game_board, row, col, player_x)
             game_progress()
@@ -85,11 +86,10 @@ while not game_over:
     # Player two turn
     else:
         col = int(input("Player 2 Choose your move from (0-6)"))
-        if valid_move():
+        if valid_move(game_board, col):
             row = get_open_row()
             player_turn(game_board, row, col, player_y) 
             game_progress()
     
-    print_board()
     turn += 1
     turn = turn % 2
