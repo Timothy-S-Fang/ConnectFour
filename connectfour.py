@@ -98,7 +98,7 @@ while not game_over:
         if valid_move(game_board, col):
             row = get_open_row(col)
             player_turn(game_board, row, col, player_y) 
-            game_progress()
+
     
     turn += 1
     turn = turn % 2
