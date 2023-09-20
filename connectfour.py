@@ -76,7 +76,7 @@ def game_progress():
 
 def get_open_row(c):
     # return the next open row given a column from top down
-    for row in game_board[1]:
+    for row in range(ROW_SIZE):
         if game_board[row][c] == cell_empty:
             return row
 
@@ -89,6 +89,7 @@ while not game_over:
         col = int(input("Player 1 Choose your move from (0-6)"))
         if valid_move(game_board, col):
             row = get_open_row(col)
+            print(row)
             player_turn(game_board, row, col, player_x)
             game_progress()
 
