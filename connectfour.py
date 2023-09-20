@@ -1,18 +1,31 @@
+import numpy
+
+board_size = (6,7) #size of the columns, rows
+cell_empty = 0 #empty cell on board
+player_x = 1 #player x piece on board
+player_y = 2 #player y piece on board
+game_over = False
+turn = 0
+
+#define game_board using 2D numpy array
+game_board = numpy.zeros(board_size, dtype= int)
 
 def create_board():
-    # Initialize the board
-    return
+    # Initialize the board by uing the 2D numpy array
+    global game_board
+    game_board = numpy.zeros(board_size, dtype= int)
 
-def player_turn():
+def player_turn(board,row, col, piece):
     # make a move
-    return
+    board[row][col] = piece
 
-def valid_move():
+def valid_move(board, col):
     # returns boolean on whether given spot is available
-    return
+    return board[-1][col] == 0
 
 def print_board():
     # print current game state
+    print(np.flip(board))
     return
 
 def game_progress():
@@ -58,10 +71,6 @@ def game_result():
 def get_open_row():
     # return the next open row given a column from top down
     return
-
-game_board = create_board()
-game_over = False
-turn = 0
 
 while not game_over:
 
