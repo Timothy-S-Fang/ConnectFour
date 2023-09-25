@@ -23,6 +23,8 @@ def player_turn(board, row, col, piece):
 
 def valid_move(board, col):
     # returns boolean on whether given spot is available
+    if col > 6 or col < 0:
+        return False
     return board[-1][col] == 0
     #TODO: avoid breaking if number outside grid of the board is picked
 
@@ -32,55 +34,54 @@ def print_board():
     return
 
 def game_progress():
-    # check if there is a winning move
+    # check if there is a winning move and return value of game_over
 
     # Horizontal win
     for col in range(COL_SIZE - 3):
         for row in range(ROW_SIZE):
             if game_board[row][col] == cell_empty:
-                return 
+                break 
             player = game_board[row][col]
             if game_board[row][col + 1] == player and game_board[row][col + 2] == player and game_board[row][col + 3] == player:
-                print("Congratulations! Player " + str(player) + "has won the game on a horizontal connection!")
-                game_over = True
+                print("Congratulations! Player " + str(player) + " has won the game on a horizontal connection!")
+                return True
     
     # Vertical win
     for col in range(COL_SIZE):
         for row in range(ROW_SIZE - 3):
             if game_board[row][col] == cell_empty:
-                return 
+                break  
             player = game_board[row][col]
-            if game_board[row][col + 1] == player and game_board[row + 2][col] == player and game_board[row + 3][col] == player:
-                print("Congratulations! Player " + str(player) + "has won the game on a horizontal connection!")
-                game_over = True
+            if game_board[row + 1][col] == player and game_board[row + 2][col] == player and game_board[row + 3][col] == player:
+                print("Congratulations! Player " + str(player) + " has won the game on a vertical connection!")
+                return True
     
     # Positively sloped angles
     for col in range(COL_SIZE - 3):
         for row in range(ROW_SIZE - 3):
             if game_board[row][col] == cell_empty:
-                return 
+                break  
             player = game_board[row][col]
             if game_board[row + 1][col + 1] == player and game_board[row + 2][col + 2] == player and game_board[row + 3][col + 3] == player:
-                print("Congratulations! Player " + str(player) + "has won the game on a diagonal connection!")
-                game_over = True
+                print("Congratulations! Player " + str(player) + " has won the game on a diagonal connection!")
+                return True
 
     # Negatively sloped angles
     for col in range(COL_SIZE - 3):
         for row in range(3, ROW_SIZE):
             if game_board[row][col] == cell_empty:
-                return 
+                break  
             player = game_board[row][col]
             if game_board[row - 1][col + 1] == player and game_board[row - 2][col + 2] == player and game_board[row - 3][col + 3] == player:
-                print("Congratulations! Player " + str(player) + "has won the game on a diagonal connection!")
-                game_over = True
-    return
+                print("Congratulations! Player " + str(player) + " has won the game on a diagonal connection!")
+                return True
+    return False
 
 def get_open_row(c):
     # return the next open row given a column from top down
     for row in range(ROW_SIZE):
         if game_board[row][c] == cell_empty:
             return row
-
     return
 
 while not game_over:
@@ -90,17 +91,26 @@ while not game_over:
         col = int(input("Player 1 Choose your move from (0-6)"))
         if valid_move(game_board, col):
             row = get_open_row(col)
-            print(row)
             player_turn(game_board, row, col, player_x)
-            game_progress()
+            game_over = game_progress()
+        else:
+            print('invalid move')
 
     # Player two turn
     else:
         col = int(input("Player 2 Choose your move from (0-6)"))
         if valid_move(game_board, col):
-            row = get_open_row(col)
+            row = get_open_row()
             player_turn(game_board, row, col, player_y) 
+            game_over = game_progress()
+        else:
+            print('invalid move')
 
     
     turn += 1
     turn = turn % 2
+    
+    # Check for a draw condition (board full)
+    if np.all(game_board != cell_empty):
+        print("The game is a draw!")
+        break
