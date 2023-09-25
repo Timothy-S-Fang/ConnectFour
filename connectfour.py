@@ -99,7 +99,7 @@ while not game_over:
     else:
         col = int(input("Player 2 Choose your move from (0-6)"))
         if valid_move(game_board, col):
-            row = get_open_row()
+            row = get_open_row(col)
             player_turn(game_board, row, col, player_y) 
             game_over = game_progress()
         else:
