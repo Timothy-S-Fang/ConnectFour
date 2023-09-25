@@ -24,6 +24,7 @@ def player_turn(board, row, col, piece):
 def valid_move(board, col):
     # returns boolean on whether given spot is available
     return board[-1][col] == 0
+    #TODO: avoid breaking if number outside grid of the board is picked
 
 def print_board():
     # print current game state
