@@ -93,3 +93,8 @@ while not game_over:
     
     turn += 1
     turn = turn % 2
+    
+    # Check for a draw condition (board full)
+    if np.all(game_board != cell_empty):
+        print("The game is a draw!")
+        break
