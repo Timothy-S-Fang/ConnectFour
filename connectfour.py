@@ -1,4 +1,5 @@
 import numpy as np
+import random
 
 ROW_SIZE = 7
 COL_SIZE = 6
@@ -82,24 +83,32 @@ def get_open_row(c):
 
     return
 
+# Define a simple AI player that chooses a random valid move
+def ai_choose_move(board):
+    valid_moves = [col for col in range(COL_SIZE) if valid_move(board, col)]
+    return random.choice(valid_moves)
+
 while not game_over:
     print_board()
+
     # Player one turn
     if turn == 0:
         col = int(input("Player 1 Choose your move from (0-6)"))
         if valid_move(game_board, col):
             row = get_open_row(col)
-            print(row)
             player_turn(game_board, row, col, player_x)
             game_progress()
 
-    # Player two turn
-    else:
-        col = int(input("Player 2 Choose your move from (0-6)"))
-        if valid_move(game_board, col):
-            row = get_open_row(col)
-            player_turn(game_board, row, col, player_y) 
+    else:  # AI player's turn
+        ai_col = ai_choose_move(game_board)
+        row = get_open_row(ai_col)
+        player_turn(game_board, row, ai_col, player_y)
 
     
     turn += 1
     turn = turn % 2
+
+    # Check for a draw condition (board full)
+    if np.all(game_board != cell_empty):
+        print("The game is a draw!")
+        break
