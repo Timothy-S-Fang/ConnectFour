@@ -81,7 +81,6 @@ def get_open_row(c):
     for row in range(ROW_SIZE):
         if game_board[row][c] == cell_empty:
             return row
-
     return
 
 while not game_over:
@@ -100,7 +99,7 @@ while not game_over:
     else:
         col = int(input("Player 2 Choose your move from (0-6)"))
         if valid_move(game_board, col):
-            row = get_open_row(col)
+            row = get_open_row()
             player_turn(game_board, row, col, player_y) 
             game_over = game_progress()
         else:
@@ -109,3 +108,8 @@ while not game_over:
     
     turn += 1
     turn = turn % 2
+    
+    # Check for a draw condition (board full)
+    if np.all(game_board != cell_empty):
+        print("The game is a draw!")
+        break
