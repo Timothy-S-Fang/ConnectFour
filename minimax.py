@@ -14,8 +14,16 @@ turn = 0
 game_board = np.zeros(board_size, dtype= int)
 
 def possible_states(state, game_board):
-    for col in range(game_board.shape[1]):
-        print("col",np.flatnonzero(np.flip(game_board[:, col])))
+    new_states = []
+    for col in range(state-1,state+2):
+        if col <= COL_SIZE:
+            print(col)
+            space = np.flatnonzero(np.flip(game_board[:, col]))
+            if space.size > 0:
+                space = space[0]
+            new_states.append(space)
+    return new_states
+
 
 
 def minimax(state,game_board,game_over, Maximizing=True):
@@ -23,8 +31,14 @@ def minimax(state,game_board,game_over, Maximizing=True):
     the best possible move in a game. Also implementing AlphaBeta pruning"""
     #Maybe setting a depth limit as well????
     if game_over != True:
-        possible_states = ()
+        if Maximizing:
+            value = float('-inf')
+            next_states = possible_states(state, game_board)
+            for child in next_states:
+                value = max(value, minimax(child,game_board,game_over,False))
+
 
 if __name__ == "__main__":
     game_board[3][2] = 1
-    possible_states(2, game_board)
+    game_board[5][5] = 1
+    possible_states(6, game_board)
