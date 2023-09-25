@@ -26,6 +26,7 @@ def valid_move(board, col):
     if col > 6 or col < 0:
         return False
     return board[-1][col] == 0
+    #TODO: avoid breaking if number outside grid of the board is picked
 
 def print_board():
     # print current game state
