@@ -36,6 +36,13 @@ def minimax(state,game_board,game_over, Maximizing=True):
             next_states = possible_states(state, game_board)
             for child in next_states:
                 value = max(value, minimax(child,game_board,game_over,False))
+            return value
+        else:
+            value = float('+inf')
+            next_states = possible_states(state, game_board)
+            for child in next_states:
+                value = min(value, minimax(child,game_board,game_over,True))
+            return value
 
 
 if __name__ == "__main__":
