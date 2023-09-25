@@ -79,7 +79,7 @@ def game_progress():
 
 def get_open_row(c):
     # return the next open row given a column from top down
-    for row in range(ROW_SIZE - 1, -1, -1):
+    for row in range(ROW_SIZE):
         if game_board[row][c] == cell_empty:
             return row
     return
