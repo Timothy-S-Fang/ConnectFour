@@ -82,7 +82,8 @@ def get_open_row(c):
     for row in range(ROW_SIZE):
         if game_board[row][c] == cell_empty:
             return row
-    return
+    return 
+    # need to set case for when row is filled up
 
 while not game_over:
     print_board()
