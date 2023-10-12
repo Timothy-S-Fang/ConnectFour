@@ -1,4 +1,5 @@
 import numpy as np
+from minimax import minimax, possible_states
 
 ROW_SIZE = 7
 COL_SIZE = 6
@@ -84,34 +85,38 @@ def get_open_row(c):
             return row
     return 
     # need to set case for when row is filled up
+if __name__ == '__main__':
+    while not game_over:
+        print_board()
+        # Player one turn
+        if turn == 0:
+            col = int(input("Player 1 Choose your move from (0-6)"))
+            if valid_move(game_board, col):
+                row = get_open_row(col)
+                player_turn(game_board, row, col, player_x)
+                game_over = game_progress()
+            else:
+                print('invalid move')
 
-while not game_over:
-    print_board()
-    # Player one turn
-    if turn == 0:
-        col = int(input("Player 1 Choose your move from (0-6)"))
-        if valid_move(game_board, col):
-            row = get_open_row(col)
-            player_turn(game_board, row, col, player_x)
-            game_over = game_progress()
+        # Player two turn
         else:
-            print('invalid move')
-
-    # Player two turn
-    else:
-        col = int(input("Player 2 Choose your move from (0-6)"))
-        if valid_move(game_board, col):
-            row = get_open_row(col)
-            player_turn(game_board, row, col, player_y) 
+            states = possible_states(game_board,2)
+            for state in states:
+                print(state)
+                ids =[minimax(state, game_over=False, depth = 2, Maximizing=True) for state in states]
+            game_board = np.flip(states[max(ids)])
+#            col = int(input("Player 2 Choose your move from (0-6)"))
+#            if valid_move(game_board, col):
+#                row = get_open_row(col)
+#                player_turn(game_board, row, col, player_y) 
             game_over = game_progress()
-        else:
-            print('invalid move')
+#            else:
+#                print('invalid move')
 
-    
-    turn += 1
-    turn = turn % 2
-    
-    # Check for a draw condition (board full)
-    if np.all(game_board != cell_empty):
-        print("The game is a draw!")
-        break
+        turn += 1
+        turn = turn % 2
+        
+        # Check for a draw condition (board full)
+        if np.all(game_board != cell_empty):
+            print("The game is a draw!")
+            break
