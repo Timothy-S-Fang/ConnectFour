@@ -1,5 +1,6 @@
 import numpy as np
 from minimax import minimax, possible_states
+import random
 
 ROW_SIZE = 7
 COL_SIZE = 6
@@ -83,6 +84,7 @@ def get_open_row(c):
     for row in range(ROW_SIZE):
         if game_board[row][c] == cell_empty:
             return row
+
     return 
     # need to set case for when row is filled up
 if __name__ == '__main__':
