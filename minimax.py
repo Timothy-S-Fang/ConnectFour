@@ -1,4 +1,5 @@
 import numpy as np
+
 #from connectfour import get_open_row, player_turn
 # Constants for player representation
 EMPTY = 0
@@ -8,38 +9,43 @@ ROW_SIZE = 7
 COL_SIZE = 6
 
 
-
 def evaluate_position(board):
-    # Implement an evaluation function to assign a score to the board state.
-    # Consider factors like the number of pieces in a row, positional advantages, etc.
-    # Positive scores are good for the AI, and negative scores are good for the opponent.
-    # Return a higher score for better positions.
-
+    # Implement an evaluation function that assigns a score to the board state
     score = 0
 
     # Horizontal Evaluation
-
     for col in range(COL_SIZE - 3):
+
         for row in range(ROW_SIZE-1):
 
             horizontal_pieces = [board[row][col], board[row][col + 1], board[row][col + 2], board[row][col + 3]]
-            contains_AI = False
-            contains_Player = False
+            contains_AI = horizontal_pieces.count(AI_PLAYER)
+            contains_Player = horizontal_pieces.count(HUMAN_PLAYER)
 
-            for h in horizontal_pieces:
-                if h == HUMAN_PLAYER:
-                    contains_Player = True
-                if h == AI_PLAYER:
-                    contains_AI = True
-            
-            if contains_AI and not contains_Player:
-                # has at least 1 AI piece and no player pieces
+            if contains_AI > 0 and contains_Player == 0:
                 score += 1
-            elif contains_Player and not contains_AI:
-                # has at least 1 player piece and no AI pieces
+            elif contains_Player > 0 and contains_AI == 0:
                 score -= 1
             
     return score
+
+
+def minimax(state, game_board, depth, maximizing=True):
+    if depth == 0 or game_progress(game_board):
+        return evaluate_position(game_board)
+
+    if maximizing:
+        best_value = -float('inf')
+        for child in possible_states(state, game_board, AI_PLAYER):
+            value = minimax(state, child, depth - 1, False)
+            best_value = max(best_value, value)
+        return best_value
+    else:
+        best_value = float('inf')
+        for child in possible_states(state, game_board, HUMAN_PLAYER):
+            value = minimax(state, child, depth - 1, True)
+            best_value = min(best_value, value)
+        return best_value
 
 def game_is_over(board):
     # Implement a function to check if the game is over (e.g., someone has won or it's a draw).
@@ -69,6 +75,7 @@ turn = 0
 #define game_board using 2D np array
 #game_board = np.zeros(board_size, dtype= int)
 
+
 def new_get_open_row(game_board,c):
     for row in range(ROW_SIZE-2, 0-1,-1):
         if game_board[row][c] == cell_empty:
@@ -76,6 +83,7 @@ def new_get_open_row(game_board,c):
 
 def possible_states(game_board, piece):
     new_states = []
+
     for col in range(ROW_SIZE):
         open_row = new_get_open_row(game_board,col)
         #print(open_row)
@@ -121,3 +129,4 @@ if __name__ == "__main__":
         ids =[minimax(state, game_over=False, depth = 5, Maximizing=True) for state in states]
     game_board = states[max(ids)]
     print(game_board)
+

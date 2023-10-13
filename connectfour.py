@@ -2,69 +2,77 @@ import numpy as np
 from minimax import minimax, possible_states
 import random
 
+
 ROW_SIZE = 7
 COL_SIZE = 6
-board_size = (COL_SIZE,ROW_SIZE) #size of the columns, rows
-cell_empty = 0 #empty cell on board
-player_x = 1 #player x piece on board
-player_y = 2 #player y piece on board
+board_size = (COL_SIZE, ROW_SIZE)
+cell_empty = 0
+player_x = 1
+player_y = 2
 game_over = False
 turn = 0
 
-#define game_board using 2D np array
-game_board = np.zeros(board_size, dtype= int)
+game_board = np.zeros(board_size, dtype=int)
 
 def create_board():
-    # Initialize the board by uing the 2D np array
     global game_board
-    game_board = np.zeros(board_size, dtype= int)
+    game_board = np.zeros(board_size, dtype=int)
 
 def player_turn(board, row, col, piece):
-    # make a move
     board[row][col] = piece
 
 def valid_move(board, col):
-    # returns boolean on whether given spot is available
-    if col > 6 or col < 0:
-        return False
-    return board[-1][col] == 0
-    #TODO: avoid breaking if number outside grid of the board is picked
+    if 0 <= col < COL_SIZE:
+        return board[-1][col] == 0
+    return False
 
 def print_board():
-    # print current game state
     print(np.flip(game_board))
     return
 
 def game_progress():
-    # check if there is a winning move and return value of game_over
-
-    # Horizontal win
     for col in range(COL_SIZE - 3):
         for row in range(ROW_SIZE):
             if game_board[row][col] == cell_empty:
-                break 
+                continue
             player = game_board[row][col]
-            if game_board[row][col + 1] == player and game_board[row][col + 2] == player and game_board[row][col + 3] == player:
+            if (
+                col + 3 < COL_SIZE
+                and game_board[row][col + 1] == player
+                and game_board[row][col + 2] == player
+                and game_board[row][col + 3] == player
+            ):
                 print("Congratulations! Player " + str(player) + " has won the game on a horizontal connection!")
                 return True
-    
+
     # Vertical win
     for col in range(COL_SIZE):
         for row in range(ROW_SIZE - 3):
             if game_board[row][col] == cell_empty:
-                break  
+                continue
             player = game_board[row][col]
-            if game_board[row + 1][col] == player and game_board[row + 2][col] == player and game_board[row + 3][col] == player:
+            if (
+                row + 3 < ROW_SIZE
+                and game_board[row + 1][col] == player
+                and game_board[row + 2][col] == player
+                and game_board[row + 3][col] == player
+            ):
                 print("Congratulations! Player " + str(player) + " has won the game on a vertical connection!")
                 return True
-    
+
     # Positively sloped angles
     for col in range(COL_SIZE - 3):
         for row in range(ROW_SIZE - 3):
             if game_board[row][col] == cell_empty:
-                break  
+                continue
             player = game_board[row][col]
-            if game_board[row + 1][col + 1] == player and game_board[row + 2][col + 2] == player and game_board[row + 3][col + 3] == player:
+            if (
+                row + 3 < ROW_SIZE
+                and col + 3 < COL_SIZE
+                and game_board[row + 1][col + 1] == player
+                and game_board[row + 2][col + 2] == player
+                and game_board[row + 3][col + 3] == player
+            ):
                 print("Congratulations! Player " + str(player) + " has won the game on a diagonal connection!")
                 return True
 
@@ -72,19 +80,27 @@ def game_progress():
     for col in range(COL_SIZE - 3):
         for row in range(3, ROW_SIZE):
             if game_board[row][col] == cell_empty:
-                break  
+                continue
             player = game_board[row][col]
-            if game_board[row - 1][col + 1] == player and game_board[row - 2][col + 2] == player and game_board[row - 3][col + 3] == player:
+            if (
+                row - 3 >= 0
+                and col + 3 < COL_SIZE
+                and game_board[row - 1][col + 1] == player
+                and game_board[row - 2][col + 2] == player
+                and game_board[row - 3][col + 3] == player
+            ):
                 print("Congratulations! Player " + str(player) + " has won the game on a diagonal connection!")
                 return True
+
     return False
 
-def get_open_row(c):
-    # return the next open row given a column from top down
-    for row in range(ROW_SIZE):
-        if game_board[row][c] == cell_empty:
-            return row
-
+def get_open_row(col):
+    if 0 <= col < COL_SIZE:
+        for row in range(ROW_SIZE - 1, -1, -1):
+            if game_board[row][col] == cell_empty:
+                return row
+    return None
+                                                       
     return 
     # need to set case for when row is filled up
 if __name__ == '__main__':
