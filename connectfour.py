@@ -34,7 +34,7 @@ def game_progress():
     for col in range(COL_SIZE - 3):
         for row in range(ROW_SIZE):
             if game_board[row][col] == cell_empty:
-                continue
+                break
             player = game_board[row][col]
             if (
                 col + 3 < COL_SIZE
@@ -49,7 +49,7 @@ def game_progress():
     for col in range(COL_SIZE):
         for row in range(ROW_SIZE - 3):
             if game_board[row][col] == cell_empty:
-                continue
+                break
             player = game_board[row][col]
             if (
                 row + 3 < ROW_SIZE
@@ -64,7 +64,7 @@ def game_progress():
     for col in range(COL_SIZE - 3):
         for row in range(ROW_SIZE - 3):
             if game_board[row][col] == cell_empty:
-                continue
+                break
             player = game_board[row][col]
             if (
                 row + 3 < ROW_SIZE
@@ -80,7 +80,7 @@ def game_progress():
     for col in range(COL_SIZE - 3):
         for row in range(3, ROW_SIZE):
             if game_board[row][col] == cell_empty:
-                continue
+                break
             player = game_board[row][col]
             if (
                 row - 3 >= 0
@@ -94,14 +94,16 @@ def game_progress():
 
     return False
 
-def get_open_row(col):
-    if 0 <= col < COL_SIZE:
-        for row in range(ROW_SIZE - 1, -1, -1):
-            if game_board[row][col] == cell_empty:
-                return row
-    return None
-                                                       
-    return 
+#def get_open_row(c):
+    # return the next open row given a column from top down
+#    for row in range(ROW_SIZE):
+#        if game_board[row][c] == cell_empty:
+#            return row
+#    return
+def get_open_row(game_board,c):
+    for row in range(ROW_SIZE-2, 0-1,-1):
+        if game_board[row][c] == cell_empty:
+            return row
     # need to set case for when row is filled up
 if __name__ == '__main__':
     while not game_over:
@@ -110,7 +112,7 @@ if __name__ == '__main__':
         if turn == 0:
             col = int(input("Player 1 Choose your move from (0-6)"))
             if valid_move(game_board, col):
-                row = get_open_row(col)
+                row = get_open_row(game_board,col)
                 player_turn(game_board, row, col, player_x)
                 game_over = game_progress()
             else:
@@ -122,11 +124,9 @@ if __name__ == '__main__':
             for state in states:
                 print(state)
                 ids =[minimax(state, game_over=False, depth = 2, Maximizing=True) for state in states]
-            game_board = np.flip(states[max(ids)])
-#            col = int(input("Player 2 Choose your move from (0-6)"))
-#            if valid_move(game_board, col):
-#                row = get_open_row(col)
-#                player_turn(game_board, row, col, player_y) 
+            print(ids)
+            print(max(ids))
+            game_board = np.flip(states[ids.index(max(ids))])
             game_over = game_progress()
 #            else:
 #                print('invalid move')

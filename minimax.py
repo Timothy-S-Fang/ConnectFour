@@ -76,7 +76,7 @@ turn = 0
 #game_board = np.zeros(board_size, dtype= int)
 
 
-def new_get_open_row(game_board,c):
+def get_open_row(game_board,c):
     for row in range(ROW_SIZE-2, 0-1,-1):
         if game_board[row][c] == cell_empty:
             return row
@@ -85,10 +85,10 @@ def possible_states(game_board, piece):
     new_states = []
 
     for col in range(ROW_SIZE):
-        open_row = new_get_open_row(game_board,col)
-        #print(open_row)
-        game_board_copy = np.flip(game_board.copy())
-        #print(game_board_copy)
+        open_row = get_open_row(game_board,col)
+        print(open_row)
+        game_board_copy = game_board.copy()
+        print(game_board_copy)
         game_board_copy[open_row][col] = piece
         new_states.append(game_board_copy)
     return new_states
