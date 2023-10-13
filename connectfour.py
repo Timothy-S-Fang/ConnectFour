@@ -27,10 +27,13 @@ def valid_move(board, col):
     return False
 
 def print_board():
-    print(np.flip(game_board))
+    print(np.flipud(game_board))
+
     return
 
 def game_progress():
+    # Checks if the game has been won by a certain player and is run every time move is made (check main)
+
     for col in range(COL_SIZE - 3):
         for row in range(ROW_SIZE):
             if game_board[row][col] == cell_empty:
@@ -94,43 +97,41 @@ def game_progress():
 
     return False
 
-#def get_open_row(c):
+def get_open_row(c):
     # return the next open row given a column from top down
-#    for row in range(ROW_SIZE):
-#        if game_board[row][c] == cell_empty:
-#            return row
-#    return
-def get_open_row(game_board,c):
-    for row in range(ROW_SIZE-2, 0-1,-1):
-        if game_board[row][c] == cell_empty:
-            return row
+   for row in range(ROW_SIZE):
+       if game_board[row][c] == cell_empty:
+           return row
+   return
+
+# def get_open_row(game_board,c):
+#     for row in range(ROW_SIZE-2, 0-1,-1):
+#         if game_board[row][c] == cell_empty:
+#             return row
     # need to set case for when row is filled up
+
 if __name__ == '__main__':
     while not game_over:
+
         print_board()
+
         # Player one turn
         if turn == 0:
             col = int(input("Player 1 Choose your move from (0-6)"))
             if valid_move(game_board, col):
-                row = get_open_row(game_board,col)
+                row = get_open_row(col)
                 player_turn(game_board, row, col, player_x)
-                game_over = game_progress()
             else:
                 print('invalid move')
 
         # Player two turn
         else:
-            states = possible_states(game_board,2)
-            for state in states:
-                print(state)
-                ids =[minimax(state, game_over=False, depth = 2, Maximizing=True) for state in states]
-            print(ids)
-            print(max(ids))
-            game_board = np.flip(states[ids.index(max(ids))])
-            game_over = game_progress()
-#            else:
-#                print('invalid move')
-
+            col = minimax(game_board, game_over=False, depth = 2, Maximizing=True)[1]
+            row = get_open_row(col)
+            player_turn(game_board, row, col, player_y)
+            print("AI choose to play " + str(col))
+        
+        game_over = game_progress()
         turn += 1
         turn = turn % 2
         

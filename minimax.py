@@ -1,6 +1,6 @@
 import numpy as np
 
-#from connectfour import get_open_row, player_turn
+
 # Constants for player representation
 EMPTY = 0
 AI_PLAYER = 1
@@ -29,6 +29,8 @@ def evaluate_position(board):
             
     return score
 
+def player_turn(board, row, col, piece):
+    board[row][col] = piece
 
 def minimax(state, game_board, depth, maximizing=True):
     if depth == 0 or game_progress(game_board):
@@ -53,7 +55,11 @@ def game_is_over(board):
 
 def get_legal_moves(board):
     # Implement a function to return a list of legal moves (e.g., available columns to drop a piece).
-    pass
+    legal_moves = []
+    for col in range(COL_SIZE):
+        if board[-1][col] == 0:
+            legal_moves.append(col)
+    return legal_moves
 
 def make_move(board, row, col, player):
     # Implement a function to make a move on the board.
@@ -77,18 +83,17 @@ turn = 0
 
 
 def get_open_row(game_board,c):
-    for row in range(ROW_SIZE-2, 0-1,-1):
-        if game_board[row][c] == cell_empty:
-            return row
+    for row in range(ROW_SIZE):
+       if game_board[row][c] == cell_empty:
+           return row
+    return
 
 def possible_states(game_board, piece):
     new_states = []
 
     for col in range(ROW_SIZE):
         open_row = get_open_row(game_board,col)
-        print(open_row)
         game_board_copy = game_board.copy()
-        print(game_board_copy)
         game_board_copy[open_row][col] = piece
         new_states.append(game_board_copy)
     return new_states
@@ -97,36 +102,52 @@ def possible_states(game_board, piece):
 def minimax(game_board,game_over, depth, Maximizing=True):
     """a function going through the tree and picking
     the best possible move in a game. Also implementing AlphaBeta pruning"""
-    #Maybe setting a depth limit as well????
+    # Maybe setting a depth limit as well????
 
     if game_over != True:
 
         if depth == 0:
-            return evaluate_position(game_board)
+            return evaluate_position(game_board), None
         
+        possible_cols = get_legal_moves(game_board)
+        best_move = 0 # 0-6 move for AI (initial starting value)
+
         if Maximizing:
             value = float('-inf')
-            next_states = possible_states(game_board, 2)
-            for child_state in next_states:
-                value = max(value, minimax(child_state,game_over, depth - 1, False))
-            return value
+
+            for col in possible_cols:
+                row = get_open_row(game_board, col)
+                temp_board = game_board.copy()
+                player_turn(temp_board, row, col, AI_PLAYER) 
+                new_value= minimax(temp_board,game_over, depth - 1, False)[0]
+                if new_value > value:
+                    value = new_value
+                    best_move = col
+
+            return value, best_move
+        
         else:
             value = float('+inf')
-            next_states = possible_states(game_board, 1)
-            for child_state in next_states:
-                value = min(value, minimax(child_state,game_over, depth - 1, True))
-            return value
+
+            for col in possible_cols:
+                row = get_open_row(game_board, col)
+                temp_board = game_board.copy()
+                player_turn(temp_board, row, col, HUMAN_PLAYER) 
+                new_value = minimax(temp_board,game_over, depth - 1, True)[0]
+                if new_value < value:
+                    value = new_value
+                    best_move = col
+                    
+            return value, best_move
 
 
-if __name__ == "__main__":
-    game_board[5][2] = 1
-    game_board[5][5] = 1
-    game_board[5][4] = 2
-    print(game_board)
-    states = possible_states(game_board,2)
-    for state in states:
-        #print(state)
-        ids =[minimax(state, game_over=False, depth = 5, Maximizing=True) for state in states]
-    game_board = states[max(ids)]
-    print(game_board)
+# if __name__ == "__main__":
+#     game_board[5][2] = 1
+#     game_board[5][5] = 1
+#     game_board[5][4] = 2
+#     states = possible_states(game_board,2)
+#     for state in states:
+#         #print(state)
+#         ids =[minimax(state, game_over=False, depth = 5, Maximizing=True) for state in states]
+#     game_board = states[max(ids)]
 
