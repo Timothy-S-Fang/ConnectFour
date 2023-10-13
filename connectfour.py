@@ -1,4 +1,7 @@
 import numpy as np
+from minimax import minimax, possible_states
+import random
+
 
 ROW_SIZE = 7
 COL_SIZE = 6
@@ -98,35 +101,40 @@ def get_open_row(col):
                 return row
     return None
                                                        
-
-
-while not game_over:
-    print_board()
-
-    # Player one turn (User)
-    if turn == 0:
-        col = int(input("Player 1 Choose your move from (0-6)"))
-        if 0 <= col < COL_SIZE:  # Check if col is within bounds
-            row = get_open_row(col)  
-            if row is not None:
+    return 
+    # need to set case for when row is filled up
+if __name__ == '__main__':
+    while not game_over:
+        print_board()
+        # Player one turn
+        if turn == 0:
+            col = int(input("Player 1 Choose your move from (0-6)"))
+            if valid_move(game_board, col):
+                row = get_open_row(col)
                 player_turn(game_board, row, col, player_x)
                 game_over = game_progress()
             else:
-                print('Invalid move')
+                print('invalid move')
+
+        # Player two turn
         else:
-            print('Column index out of bounds. Please choose a column between 0 and', COL_SIZE - 1)
+            states = possible_states(game_board,2)
+            for state in states:
+                print(state)
+                ids =[minimax(state, game_over=False, depth = 2, Maximizing=True) for state in states]
+            game_board = np.flip(states[max(ids)])
+#            col = int(input("Player 2 Choose your move from (0-6)"))
+#            if valid_move(game_board, col):
+#                row = get_open_row(col)
+#                player_turn(game_board, row, col, player_y) 
+            game_over = game_progress()
+#            else:
+#                print('invalid move')
 
-    # Player two turn (AI)
-    else:
-        print("Player 2 (AI) is thinking...")
-        col = ai_move(game_board)  # Call the AI function to make a move
-        if 0 <= col < COL_SIZE:  # Check if col is within bounds
-            row = get_open_row(col)  # Uncomment and place this line here to assign a valid row
-            if row is not None:
-                player_turn(game_board, row, col, player_y)
-                game_over = game_progress()
-            else:
-                print('AI chose an out-of-bounds column. This is an issue in your AI logic.')
-
-    turn += 1
-    turn = turn % 2
+        turn += 1
+        turn = turn % 2
+        
+        # Check for a draw condition (board full)
+        if np.all(game_board != cell_empty):
+            print("The game is a draw!")
+            break
