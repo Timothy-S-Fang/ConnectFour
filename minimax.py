@@ -128,6 +128,30 @@ def possible_states(game_board, piece):
         new_states.append(game_board_copy)
     return new_states
 
+def winning_move(board, piece):
+	# Check horizontal locations for win
+	for c in range(COL_SIZE-3):
+		for r in range(ROW_SIZE):
+			if board[r][c] == piece and board[r][c+1] == piece and board[r][c+2] == piece and board[r][c+3] == piece:
+				return True
+
+	# Check vertical locations for win
+	for c in range(COL_SIZE):
+		for r in range(ROW_SIZE-3):
+			if board[r][c] == piece and board[r+1][c] == piece and board[r+2][c] == piece and board[r+3][c] == piece:
+				return True
+
+	# Check positively sloped diaganols
+	for c in range(COL_SIZE-3):
+		for r in range(ROW_SIZE-3):
+			if board[r][c] == piece and board[r+1][c+1] == piece and board[r+2][c+2] == piece and board[r+3][c+3] == piece:
+				return True
+
+	# Check negatively sloped diaganols
+	for c in range(COL_SIZE-3):
+		for r in range(3, ROW_SIZE):
+			if board[r][c] == piece and board[r-1][c+1] == piece and board[r-2][c+2] == piece and board[r-3][c+3] == piece:
+				return True
 
 def minimax(game_board,game_over, depth, Maximizing=True):
     """a function going through the tree and picking
@@ -137,7 +161,11 @@ def minimax(game_board,game_over, depth, Maximizing=True):
     if game_over != True:
 
         if depth == 0:
-            return evaluate_position(game_board), None
+            if winning_move(game_board, AI_PLAYER):
+                return (100000000000000, None)
+            elif winning_move(game_board, HUMAN_PLAYER):
+                return (-10000000000000, None)
+            return (evaluate_position(game_board), None)
         
         possible_cols = get_legal_moves(game_board)
         best_move = 0 # 0-6 move for AI (initial starting value)
