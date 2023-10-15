@@ -125,7 +125,7 @@ if __name__ == '__main__':
 
         # Player two turn
         else:
-            col = minimax(game_board, game_over=False, depth = 2, Maximizing=True)[1]
+            col = minimax(game_board, game_over=False, depth = 5, alpha=float('-inf'), beta=float('inf'),  Maximizing=True)[1]
             row = get_open_row(col)
             player_turn(game_board, row, col, player_y)
             print("AI choose to play " + str(col))

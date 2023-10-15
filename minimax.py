@@ -153,7 +153,7 @@ def winning_move(board, piece):
 			if board[r][c] == piece and board[r-1][c+1] == piece and board[r-2][c+2] == piece and board[r-3][c+3] == piece:
 				return True
 
-def minimax(game_board,game_over, depth, Maximizing=True):
+def minimax(game_board,game_over, depth, alpha, beta, Maximizing=True):
     """a function going through the tree and picking
     the best possible move in a game. Also implementing AlphaBeta pruning"""
     # Maybe setting a depth limit as well????
@@ -177,10 +177,14 @@ def minimax(game_board,game_over, depth, Maximizing=True):
                 row = get_open_row(game_board, col)
                 temp_board = game_board.copy()
                 player_turn(temp_board, row, col, AI_PLAYER) 
-                new_value= minimax(temp_board,game_over, depth - 1, False)[0]
+                new_value= minimax(temp_board,game_over, depth - 1, alpha, beta, False)[0]
                 if new_value > value:
                     value = new_value
                     best_move = col
+                alpha = max(alpha, value)
+                if beta <= alpha:
+                    break
+
 
             return value, best_move
         
@@ -191,10 +195,13 @@ def minimax(game_board,game_over, depth, Maximizing=True):
                 row = get_open_row(game_board, col)
                 temp_board = game_board.copy()
                 player_turn(temp_board, row, col, HUMAN_PLAYER) 
-                new_value = minimax(temp_board,game_over, depth - 1, True)[0]
+                new_value = minimax(temp_board,game_over, depth - 1, alpha, beta, True)[0]
                 if new_value < value:
                     value = new_value
                     best_move = col
+                beta = min(beta,value)
+                if beta <= alpha:
+                    break
                     
             return value, best_move
 
