@@ -5,19 +5,16 @@ import numpy as np
 EMPTY = 0
 AI_PLAYER = 1
 HUMAN_PLAYER = 2
-ROW_SIZE = 7
-COL_SIZE = 6
+ROW_SIZE = 6
+COL_SIZE = 7
 
 
 def evaluate_position(board):
     # Implement an evaluation function that assigns a score to the board state
     score = 0
-
     # Horizontal Evaluation
     for col in range(COL_SIZE - 3):
-
-        for row in range(ROW_SIZE-1):
-
+        for row in range(ROW_SIZE):
             horizontal_pieces = [board[row][col], board[row][col + 1], board[row][col + 2], board[row][col + 3]]
             contains_AI = horizontal_pieces.count(AI_PLAYER)
             contains_Player = horizontal_pieces.count(HUMAN_PLAYER)
@@ -26,14 +23,49 @@ def evaluate_position(board):
                 score += 1
             elif contains_Player > 0 and contains_AI == 0:
                 score -= 1
-            
+        
+    # Vertical win
+    for col in range(COL_SIZE):
+        for row in range(ROW_SIZE - 3):
+            vertical_pieces = [board[row][col], board[row + 1][col], board[row + 2][col], board[row + 3][col]]
+            contains_AI = vertical_pieces.count(AI_PLAYER)
+            contains_Player = vertical_pieces.count(HUMAN_PLAYER)
+            if contains_AI > 0 and contains_Player == 0:
+                score += 1
+            elif contains_Player > 0 and contains_AI == 0:
+                score -= 1
+    
+    # Positively sloped angles
+    for col in range(COL_SIZE - 3):
+        for row in range(ROW_SIZE - 3):
+            pos_slope_pieces = [board[row][col], board[row + 1][col + 1], board[row + 2][col + 2], board[row + 3][col + 3]]
+            contains_AI = pos_slope_pieces.count(AI_PLAYER)
+            contains_Player = pos_slope_pieces.count(HUMAN_PLAYER)
+
+            if contains_AI > 0 and contains_Player == 0:
+                score += 1
+            elif contains_Player > 0 and contains_AI == 0:
+                score -= 1
+    
+    # Negatively sloped angles
+    for col in range(COL_SIZE - 3):
+        for row in range(3, ROW_SIZE):
+            neg_slope_piece = [board[row][col], board[row - 1][col + 1], board[row - 2][col + 2], board[row - 3][col + 3]]
+            contains_AI = neg_slope_piece.count(AI_PLAYER)
+            contains_Player = neg_slope_piece.count(HUMAN_PLAYER)
+
+            if contains_AI > 0 and contains_Player == 0:
+                score += 1
+            elif contains_Player > 0 and contains_AI == 0:
+                score -= 1
+                
     return score
 
 def player_turn(board, row, col, piece):
     board[row][col] = piece
 
 def minimax(state, game_board, depth, maximizing=True):
-    if depth == 0 or game_progress(game_board):
+    if depth == 0:
         return evaluate_position(game_board)
 
     if maximizing:
@@ -69,8 +101,6 @@ def undo_move(board, row, col):
     # Implement a function to undo a move on the board.
     pass
 
-ROW_SIZE = 7
-COL_SIZE = 6
 board_size = (COL_SIZE,ROW_SIZE) #size of the columns, rows
 cell_empty = 0 #empty cell on board
 player_x = 1 #player x piece on board

@@ -3,9 +3,9 @@ from minimax import minimax, possible_states
 import random
 
 
-ROW_SIZE = 7
-COL_SIZE = 6
-board_size = (COL_SIZE, ROW_SIZE)
+ROW_SIZE = 6
+COL_SIZE = 7
+board_size = (ROW_SIZE, COL_SIZE)
 cell_empty = 0
 player_x = 1
 player_y = 2
@@ -40,8 +40,7 @@ def game_progress():
                 break
             player = game_board[row][col]
             if (
-                col + 3 < COL_SIZE
-                and game_board[row][col + 1] == player
+                game_board[row][col + 1] == player
                 and game_board[row][col + 2] == player
                 and game_board[row][col + 3] == player
             ):
@@ -55,8 +54,7 @@ def game_progress():
                 break
             player = game_board[row][col]
             if (
-                row + 3 < ROW_SIZE
-                and game_board[row + 1][col] == player
+                game_board[row + 1][col] == player
                 and game_board[row + 2][col] == player
                 and game_board[row + 3][col] == player
             ):
@@ -70,8 +68,7 @@ def game_progress():
                 break
             player = game_board[row][col]
             if (
-                row + 3 < ROW_SIZE
-                and col + 3 < COL_SIZE
+                col + 3 < COL_SIZE
                 and game_board[row + 1][col + 1] == player
                 and game_board[row + 2][col + 2] == player
                 and game_board[row + 3][col + 3] == player
@@ -86,9 +83,7 @@ def game_progress():
                 break
             player = game_board[row][col]
             if (
-                row - 3 >= 0
-                and col + 3 < COL_SIZE
-                and game_board[row - 1][col + 1] == player
+                game_board[row - 1][col + 1] == player
                 and game_board[row - 2][col + 2] == player
                 and game_board[row - 3][col + 3] == player
             ):
