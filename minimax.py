@@ -64,21 +64,27 @@ def evaluate_position(board):
 def player_turn(board, row, col, piece):
     board[row][col] = piece
 
-def minimax(state, game_board, depth, maximizing=True):
+def minimax(state, game_board, depth, alpha, beta, maximizing=True):
     if depth == 0:
         return evaluate_position(game_board)
 
     if maximizing:
         best_value = -float('inf')
         for child in possible_states(state, game_board, AI_PLAYER):
-            value = minimax(state, child, depth - 1, False)
+            value = minimax(state, child, depth - 1, alpha, beta, False)
             best_value = max(best_value, value)
+            alpha = max(alpha,value)
+            if beta <= alpha:
+                break
         return best_value
     else:
         best_value = float('inf')
         for child in possible_states(state, game_board, HUMAN_PLAYER):
-            value = minimax(state, child, depth - 1, True)
+            value = minimax(state, child, depth - 1, alpha, beta, True)
             best_value = min(best_value, value)
+            beta = min(beta, value)
+            if beta <= alpha:
+                break
         return best_value
 
 def game_is_over(board):
