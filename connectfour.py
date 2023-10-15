@@ -45,6 +45,7 @@ def game_progress():
                 and game_board[row][col + 3] == player
             ):
                 print("Congratulations! Player " + str(player) + " has won the game on a horizontal connection!")
+                print_board()
                 return True
 
     # Vertical win
@@ -59,6 +60,7 @@ def game_progress():
                 and game_board[row + 3][col] == player
             ):
                 print("Congratulations! Player " + str(player) + " has won the game on a vertical connection!")
+                print_board()
                 return True
 
     # Positively sloped angles
@@ -74,6 +76,7 @@ def game_progress():
                 and game_board[row + 3][col + 3] == player
             ):
                 print("Congratulations! Player " + str(player) + " has won the game on a diagonal connection!")
+                print_board()
                 return True
 
     # Negatively sloped angles
@@ -88,6 +91,7 @@ def game_progress():
                 and game_board[row - 3][col + 3] == player
             ):
                 print("Congratulations! Player " + str(player) + " has won the game on a diagonal connection!")
+                print_board()
                 return True
 
     return False
