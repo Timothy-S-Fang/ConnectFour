@@ -117,7 +117,6 @@ def minimax(game_board, depth, alpha, beta, Maximizing=True):
     """A function going through the tree and picking
     the best possible move in a game. Also implementing AlphaBeta pruning
     Returns the score and best move."""
-
     # run minimax until the depth reaches 0
     # check for win/score
     if depth == 0:
