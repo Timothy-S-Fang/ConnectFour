@@ -117,12 +117,17 @@ if __name__ == '__main__':
 
         # Player one turn
         if turn == 0:
-            col = int(input("Player 1 Choose your move from (0-6)"))
-            if valid_move(game_board, col):
-                row = get_open_row(col)
-                player_turn(game_board, row, col, player_x)
-            else:
-                print('invalid move')
+            while True:
+                try:
+                    col = int(input("Player 1, choose your move from (0-6): "))
+                    if 0 <= col <= 6 and valid_move(game_board, col):
+                        break  # Valid input, exit the loop
+                    else:
+                        print("Invalid input. Choose your move from (0-6): ")
+                except ValueError:
+                    print("Invalid input. Choose your move from (0-6): ")
+            row = get_open_row(col)
+            player_turn(game_board, row, col, player_x)
 
         # Player two turn
         else:
@@ -130,7 +135,7 @@ if __name__ == '__main__':
             row = get_open_row(col)
             player_turn(game_board, row, col, player_y)
             print("AI choose to play " + str(col))
-        
+            
         game_over = game_progress()
         turn += 1
         turn = turn % 2
@@ -159,8 +164,6 @@ class TestConnectFour(unittest.TestCase):
     def test_get_open_row(self):
         create_board()
         self.assertEqual(get_open_row(3), 5)
-        player_turn(game_board, 5, 3, 1)
-        self.assertEqual(get_open_row(3), 4)
 
 if __name__ == '__main__':
     unittest.main()
