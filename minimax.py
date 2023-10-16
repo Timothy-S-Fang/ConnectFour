@@ -1,3 +1,5 @@
+import numpy as np
+import unittest
 
 # Constants for player representation
 EMPTY = 0
@@ -109,9 +111,9 @@ def winning_move(board, piece):
 
     # Check negatively sloped diagonals
     for c in range(COL_SIZE-3):
-    	for r in range(3, ROW_SIZE):
-    		if board[r][c] == piece and board[r-1][c+1] == piece and board[r-2][c+2] == piece and board[r-3][c+3] == piece:
-    			return True
+        for r in range(3, ROW_SIZE):
+            if board[r][c] == piece and board[r-1][c+1] == piece and board[r-2][c+2] == piece and board[r-3][c+3] == piece:
+                return True
 
 def minimax(game_board, depth, alpha, beta, Maximizing=True):
     """A function going through the tree and picking
@@ -169,4 +171,25 @@ def minimax(game_board, depth, alpha, beta, Maximizing=True):
                 break
                 
         return value, best_move
+
+
+class TestMinimax(unittest.TestCase):
+    def test_evaluate_position(self):
+        game_board = np.zeros((6, 7), dtype=int)
+        score = evaluate_position(game_board)
+        self.assertEqual(score, 0)  # Ensure the initial score is as expected
+
+    def test_minimax(self):
+        game_board = np.zeros((6, 7), dtype=int)
+        depth = 4
+        alpha = float('-inf')
+        beta = float('inf')
+        maximizing = True
+        score, best_move = minimax(game_board, depth, alpha, beta, maximizing)
+        self.assertIsInstance(score, int)  # Ensure the score is an integer
+        self.assertIsInstance(best_move, int)  # Ensure the best_move is an integer
+
+if __name__ == '__main__':
+    unittest.main()
+    
 

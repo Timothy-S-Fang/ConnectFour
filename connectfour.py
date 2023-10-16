@@ -1,5 +1,6 @@
 import numpy as np
 from minimax import minimax
+import unittest
 
 
 ROW_SIZE = 6
@@ -138,3 +139,29 @@ if __name__ == '__main__':
         if np.all(game_board != cell_empty):
             print("The game is a draw!")
             break
+
+class TestConnectFour(unittest.TestCase):
+    def test_create_board(self):
+        create_board()
+        self.assertTrue(np.array_equal(game_board, np.zeros((6, 7), dtype=int)))
+
+    def test_player_turn(self):
+        create_board()
+        player_turn(game_board, 5, 3, 1)
+        self.assertEqual(game_board[5][3], 1)
+
+    def test_valid_move(self):
+        create_board()
+        self.assertTrue(valid_move(game_board, 3))
+        player_turn(game_board, 5, 3, 1)
+        self.assertFalse(valid_move(game_board, 3))
+
+    def test_get_open_row(self):
+        create_board()
+        self.assertEqual(get_open_row(3), 5)
+        player_turn(game_board, 5, 3, 1)
+        self.assertEqual(get_open_row(3), 4)
+
+if __name__ == '__main__':
+    unittest.main()
+
