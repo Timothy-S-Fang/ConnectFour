@@ -1,39 +1,45 @@
 import numpy as np
-from minimax import minimax, possible_states
-import random
+from minimax import minimax
 
 
 ROW_SIZE = 6
 COL_SIZE = 7
-board_size = (ROW_SIZE, COL_SIZE)
-cell_empty = 0
-player_x = 1
-player_y = 2
+board_size = (ROW_SIZE, COL_SIZE) #size of the columns, rows
+cell_empty = 0 #empty cell on board
+player_x = 1 #player x piece on board
+player_y = 2 #player y piece on board
 game_over = False
 turn = 0
 
 game_board = np.zeros(board_size, dtype=int)
 
 def create_board():
+    """A function to initalize the board."""
     global game_board
     game_board = np.zeros(board_size, dtype=int)
 
 def player_turn(board, row, col, piece):
+    """A function allowing the player to make a move."""
     board[row][col] = piece
 
 def valid_move(board, col):
+    """A function to check whether a move is valid/legal.
+    Returns True if the move is within the grid and is not
+    already filled."""
     if 0 <= col < COL_SIZE:
         return board[-1][col] == 0
     return False
 
 def print_board():
+    """Prints the game-board."""
     print(np.flipud(game_board))
 
     return
 
 def game_progress():
-    # Checks if the game has been won by a certain player and is run every time move is made (check main)
-
+    """A function thath checks if the game has been won by a certain player
+    and is run every time move is made (see main).
+    Returns True or False to adjust game_over."""
     for col in range(COL_SIZE - 3):
         for row in range(ROW_SIZE):
             if game_board[row][col] == cell_empty:
@@ -96,18 +102,12 @@ def game_progress():
 
     return False
 
-def get_open_row(c):
-    # return the next open row given a column from top down
-   for row in range(ROW_SIZE):
-       if game_board[row][c] == cell_empty:
-           return row
-   return
-
-# def get_open_row(game_board,c):
-#     for row in range(ROW_SIZE-2, 0-1,-1):
-#         if game_board[row][c] == cell_empty:
-#             return row
-    # need to set case for when row is filled up
+def get_open_row(col):
+    """Returns the next open row given a column from top down."""
+    for row in range(ROW_SIZE):
+        if game_board[row][col] == cell_empty:
+            return row
+    return
 
 if __name__ == '__main__':
     while not game_over:
@@ -125,7 +125,7 @@ if __name__ == '__main__':
 
         # Player two turn
         else:
-            col = minimax(game_board, game_over=False, depth = 5, alpha=float('-inf'), beta=float('inf'),  Maximizing=True)[1]
+            col = minimax(game_board, depth = 5, alpha=float('-inf'), beta=float('inf'),  Maximizing=True)[1]
             row = get_open_row(col)
             player_turn(game_board, row, col, player_y)
             print("AI choose to play " + str(col))
