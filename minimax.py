@@ -1,5 +1,5 @@
 import numpy as np
-
+import unittest
 
 # Constants for player representation
 EMPTY = 0
@@ -7,10 +7,16 @@ AI_PLAYER = 1
 HUMAN_PLAYER = 2
 ROW_SIZE = 6
 COL_SIZE = 7
+board_size = (COL_SIZE,ROW_SIZE) #size of the columns, rows
+cell_empty = 0 #empty cell on board
+player_x = 1 #player x piece on board
+player_y = 2 #player y piece on board
 
 
 def evaluate_position(board):
-    # Implement an evaluation function that assigns a score to the board state
+    """An evaluation function that assigns a score to the board state
+    by adding the possible score for all directions.
+    Returns the score."""
     score = 0
     # Horizontal Evaluation
     for col in range(COL_SIZE - 3):
@@ -62,150 +68,127 @@ def evaluate_position(board):
     return score
 
 def player_turn(board, row, col, piece):
+    """A function allowing the AI-player to make a move."""
     board[row][col] = piece
 
-def minimax(state, game_board, depth, maximizing=True):
-    if depth == 0:
-        return evaluate_position(game_board)
-
-    if maximizing:
-        best_value = -float('inf')
-        for child in possible_states(state, game_board, AI_PLAYER):
-            value = minimax(state, child, depth - 1, False)
-            best_value = max(best_value, value)
-        return best_value
-    else:
-        best_value = float('inf')
-        for child in possible_states(state, game_board, HUMAN_PLAYER):
-            value = minimax(state, child, depth - 1, True)
-            best_value = min(best_value, value)
-        return best_value
-
-def game_is_over(board):
-    # Implement a function to check if the game is over (e.g., someone has won or it's a draw).
-    pass
-
 def get_legal_moves(board):
-    # Implement a function to return a list of legal moves (e.g., available columns to drop a piece).
+    """Gets the legal next moves,
+    it returns a list of the first open row for each column."""
     legal_moves = []
     for col in range(COL_SIZE):
         if board[-1][col] == 0:
             legal_moves.append(col)
     return legal_moves
 
-def make_move(board, row, col, player):
-    # Implement a function to make a move on the board.
-    pass
 
-def undo_move(board, row, col):
-    # Implement a function to undo a move on the board.
-    pass
-
-board_size = (COL_SIZE,ROW_SIZE) #size of the columns, rows
-cell_empty = 0 #empty cell on board
-player_x = 1 #player x piece on board
-player_y = 2 #player y piece on board
-game_over = False
-turn = 0
-
-#define game_board using 2D np array
-#game_board = np.zeros(board_size, dtype= int)
-
-
-def get_open_row(game_board,c):
+def get_open_row(board,col):
+    """Returns the next open row from top down, given the column"""
     for row in range(ROW_SIZE):
-       if game_board[row][c] == cell_empty:
+       if board[row][col] == cell_empty:
            return row
     return
 
-def possible_states(game_board, piece):
-    new_states = []
-
-    for col in range(ROW_SIZE):
-        open_row = get_open_row(game_board,col)
-        game_board_copy = game_board.copy()
-        game_board_copy[open_row][col] = piece
-        new_states.append(game_board_copy)
-    return new_states
-
 def winning_move(board, piece):
+    """A funciton checking if a winning move is being made.
+    Returns True if that is the case."""
 	# Check horizontal locations for win
-	for c in range(COL_SIZE-3):
-		for r in range(ROW_SIZE):
-			if board[r][c] == piece and board[r][c+1] == piece and board[r][c+2] == piece and board[r][c+3] == piece:
-				return True
+    for c in range(COL_SIZE-3):
+        for r in range(ROW_SIZE):
+            if board[r][c] == piece and board[r][c+1] == piece and board[r][c+2] == piece and board[r][c+3] == piece:
+                return True
 
 	# Check vertical locations for win
-	for c in range(COL_SIZE):
-		for r in range(ROW_SIZE-3):
-			if board[r][c] == piece and board[r+1][c] == piece and board[r+2][c] == piece and board[r+3][c] == piece:
-				return True
+    for c in range(COL_SIZE):
+        for r in range(ROW_SIZE-3):
+            if board[r][c] == piece and board[r+1][c] == piece and board[r+2][c] == piece and board[r+3][c] == piece:
+                return True
 
-	# Check positively sloped diaganols
-	for c in range(COL_SIZE-3):
-		for r in range(ROW_SIZE-3):
-			if board[r][c] == piece and board[r+1][c+1] == piece and board[r+2][c+2] == piece and board[r+3][c+3] == piece:
-				return True
+	# Check positively sloped diagonals
+    for c in range(COL_SIZE-3):
+    	for r in range(ROW_SIZE-3):
+	    	if board[r][c] == piece and board[r+1][c+1] == piece and board[r+2][c+2] == piece and board[r+3][c+3] == piece:
+	    		return True
 
-	# Check negatively sloped diaganols
-	for c in range(COL_SIZE-3):
-		for r in range(3, ROW_SIZE):
-			if board[r][c] == piece and board[r-1][c+1] == piece and board[r-2][c+2] == piece and board[r-3][c+3] == piece:
-				return True
+    # Check negatively sloped diagonals
+    for c in range(COL_SIZE-3):
+        for r in range(3, ROW_SIZE):
+            if board[r][c] == piece and board[r-1][c+1] == piece and board[r-2][c+2] == piece and board[r-3][c+3] == piece:
+                return True
 
-def minimax(game_board,game_over, depth, Maximizing=True):
-    """a function going through the tree and picking
-    the best possible move in a game. Also implementing AlphaBeta pruning"""
-    # Maybe setting a depth limit as well????
+def minimax(game_board, depth, alpha, beta, Maximizing=True):
+    """A function going through the tree and picking
+    the best possible move in a game. Also implementing AlphaBeta pruning
+    Returns the score and best move."""
+    # run minimax until the depth reaches 0
+    # check for win/score
+    if depth == 0:
+        if winning_move(game_board, AI_PLAYER):
+            return (100000000000000, None)
+        elif winning_move(game_board, HUMAN_PLAYER):
+            return (-10000000000000, None)
+        return (evaluate_position(game_board), None)
+    
+    possible_cols = get_legal_moves(game_board) # possible next moves
+    best_move = 0 # 0-6 move for AI (initial starting value)
 
-    if game_over != True:
+    if Maximizing:
+        value = float('-inf') # score is set to negative infinity
 
-        if depth == 0:
-            if winning_move(game_board, AI_PLAYER):
-                return (100000000000000, None)
-            elif winning_move(game_board, HUMAN_PLAYER):
-                return (-10000000000000, None)
-            return (evaluate_position(game_board), None)
-        
-        possible_cols = get_legal_moves(game_board)
-        best_move = 0 # 0-6 move for AI (initial starting value)
-
-        if Maximizing:
-            value = float('-inf')
-
-            for col in possible_cols:
-                row = get_open_row(game_board, col)
-                temp_board = game_board.copy()
-                player_turn(temp_board, row, col, AI_PLAYER) 
-                new_value= minimax(temp_board,game_over, depth - 1, False)[0]
-                if new_value > value:
-                    value = new_value
-                    best_move = col
-
-            return value, best_move
-        
-        else:
-            value = float('+inf')
-
-            for col in possible_cols:
-                row = get_open_row(game_board, col)
-                temp_board = game_board.copy()
-                player_turn(temp_board, row, col, HUMAN_PLAYER) 
-                new_value = minimax(temp_board,game_over, depth - 1, True)[0]
-                if new_value < value:
-                    value = new_value
-                    best_move = col
-                    
-            return value, best_move
+        # get the score for each possible next move, save the best one
+        # and the move associated with it
+        # (go into each branch of the tree, interrupt by pruning
+        # if it leads to a state that is in the advantage of opposite
+        # player)
+        for col in possible_cols:
+            row = get_open_row(game_board, col)
+            temp_board = game_board.copy()
+            player_turn(temp_board, row, col, AI_PLAYER) 
+            new_value= minimax(temp_board, depth - 1, alpha, beta, False)[0]
+            if new_value > value: # update score and best_move
+                value = new_value
+                best_move = col
+            alpha = max(alpha, value) # update alpha
+            if beta <= alpha: #prune the tree
+                break
 
 
-# if __name__ == "__main__":
-#     game_board[5][2] = 1
-#     game_board[5][5] = 1
-#     game_board[5][4] = 2
-#     states = possible_states(game_board,2)
-#     for state in states:
-#         #print(state)
-#         ids =[minimax(state, game_over=False, depth = 5, Maximizing=True) for state in states]
-#     game_board = states[max(ids)]
+        return value, best_move
+    
+    # the minimising player
+    else:
+        value = float('+inf') # score is set to positive infinity
 
+        for col in possible_cols:
+            row = get_open_row(game_board, col)
+            temp_board = game_board.copy()
+            player_turn(temp_board, row, col, HUMAN_PLAYER) 
+            new_value = minimax(temp_board, depth - 1, alpha, beta, True)[0]
+            if new_value < value: # update score and best_move
+                value = new_value
+                best_move = col
+            beta = min(beta,value) # update beta
+            if beta <= alpha: # prune the tree
+                break
+                
+        return value, best_move
+
+class TestMinimax(unittest.TestCase):
+    def test_evaluate_position(self):
+        # Test if the evaluate_position function returns the correct initial score
+        game_board = np.zeros((6, 7), dtype=int)
+        score = evaluate_position(game_board)
+        self.assertEqual(score, 0)  # Ensure the initial score is as expected (0)
+
+    def test_minimax(self):
+        # Test if the minimax function works and returns the expected data types
+        game_board = np.zeros((6, 7), dtype=int)
+        depth = 4
+        alpha = float('-inf')
+        beta = float('inf')
+        maximizing = True
+        score, best_move = minimax(game_board, depth, alpha, beta, maximizing)
+        self.assertIsInstance(score, int)  # Ensure the score is an integer
+        self.assertIsInstance(best_move, int)  # Ensure the best_move is an integer
+
+if __name__ == '__main__':
+    unittest.main()
