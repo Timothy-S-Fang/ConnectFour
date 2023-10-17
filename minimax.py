@@ -172,14 +172,15 @@ def minimax(game_board, depth, alpha, beta, Maximizing=True):
                 
         return value, best_move
 
-
 class TestMinimax(unittest.TestCase):
     def test_evaluate_position(self):
+        # Test if the evaluate_position function returns the correct initial score
         game_board = np.zeros((6, 7), dtype=int)
         score = evaluate_position(game_board)
-        self.assertEqual(score, 0)  # Ensure the initial score is as expected
+        self.assertEqual(score, 0)  # Ensure the initial score is as expected (0)
 
     def test_minimax(self):
+        # Test if the minimax function works and returns the expected data types
         game_board = np.zeros((6, 7), dtype=int)
         depth = 4
         alpha = float('-inf')
@@ -191,5 +192,3 @@ class TestMinimax(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-    
-
