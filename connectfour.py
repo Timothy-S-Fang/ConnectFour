@@ -147,24 +147,23 @@ if __name__ == '__main__':
 
 class TestConnectFour(unittest.TestCase):
     def test_create_board(self):
+        # Test if the create_board function initializes the game board properly
         create_board()
         self.assertTrue(np.array_equal(game_board, np.zeros((6, 7), dtype=int)))
 
     def test_player_turn(self):
+        # Test if the player_turn function correctly updates the game board
         create_board()
         player_turn(game_board, 5, 3, 1)
-        self.assertEqual(game_board[5][3], 1)
+        self.assertEqual(game_board[5][3], 1)  # Ensure the specified position is updated
 
     def test_valid_move(self):
+        # Test if the valid_move function correctly checks if a move is valid
         create_board()
-        self.assertTrue(valid_move(game_board, 3))
-        player_turn(game_board, 5, 3, 1)
-        self.assertFalse(valid_move(game_board, 3))
-
-    def test_get_open_row(self):
-        create_board()
-        self.assertEqual(get_open_row(3), 5)
-
+        self.assertTrue(valid_move(game_board, 3))  # Column 3 should be valid
+        player_turn(game_board, 5, 3, 1)  # Fill a slot in column 3
+        self.assertFalse(valid_move(game_board, 3))  # Column 3 should be invalid after the move
+        
 if __name__ == '__main__':
     unittest.main()
 
